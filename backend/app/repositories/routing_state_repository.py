@@ -56,3 +56,21 @@ def update_last_assigned_employee(
     db.refresh(state)
 
     return state
+
+
+def reset_routing_states(
+    db: Session,
+) -> int:
+    updated_count = (
+        db.query(RoutingState)
+        .update(
+            {
+                RoutingState.last_assigned_employee_id: None,
+            },
+            synchronize_session=False,
+        )
+    )
+
+    db.commit()
+
+    return updated_count

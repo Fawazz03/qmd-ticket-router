@@ -38,12 +38,28 @@ def is_within_shift(
     """
     Check whether an employee is currently within their shift.
 
-    Example:
-    Shift: 09:00 - 18:00
-    Current time: 10:00 -> True
-    Current time: 20:00 -> False
+    Supports both normal and overnight shifts.
+
+    Normal shift:
+    06:00 - 16:00
+    10:00 -> True
+    20:00 -> False
+
+    Overnight shift:
+    22:00 - 08:00
+    02:00 -> True
+    12:00 -> False
     """
-    return shift_start <= current_time <= shift_end
+
+    # Normal shift
+    if shift_start <= shift_end:
+        return shift_start <= current_time <= shift_end
+
+    # Overnight shift
+    return (
+        current_time >= shift_start
+        or current_time <= shift_end
+    )
 
 
 def get_eligible_employees(

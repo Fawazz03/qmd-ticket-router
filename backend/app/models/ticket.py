@@ -1,4 +1,5 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
+from sqlalchemy.orm import relationship
 
 from app.core.database import Base
 
@@ -19,6 +20,11 @@ class Ticket(Base):
         Integer,
         ForeignKey("employees.id"),
         nullable=True,
+    )
+
+    assigned_employee = relationship(
+        "Employee",
+        foreign_keys=[assigned_employee_id],
     )
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())

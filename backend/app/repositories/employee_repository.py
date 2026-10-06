@@ -7,11 +7,20 @@ def replace_roster(
     db: Session,
     employees: list[dict],
 ) -> list[Employee]:
-    db.query(Employee).delete()
-    db.flush()
+    # Preserve existing employees for assignment history.
+    # They become inactive when a new roster is uploaded.
+    db.query(Employee).update(
+        {
+            Employee.is_active: False,
+        },
+        synchronize_session=False,
+    )
 
     new_employees = [
-        Employee(**employee)
+        Employee(
+            **employee,
+            is_active=True,
+        )
         for employee in employees
     ]
 
@@ -27,7 +36,11 @@ def replace_roster(
 def get_all_employees(
     db: Session,
 ) -> list[Employee]:
-    return db.query(Employee).all()
+    return (
+        db.query(Employee)
+        .filter(Employee.is_active.is_(True))
+        .all()
+    )
 
 
 def get_employees_by_role_and_queue(
@@ -40,6 +53,7 @@ def get_employees_by_role_and_queue(
         .filter(
             Employee.role == role,
             Employee.queue == queue,
+            Employee.is_active.is_(True),
         )
         .order_by(Employee.id)
         .all()

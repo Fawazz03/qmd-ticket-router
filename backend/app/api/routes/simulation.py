@@ -3,6 +3,9 @@ import asyncio
 from fastapi import APIRouter
 from pydantic import BaseModel
 
+from app.core.database import SessionLocal
+from app.repositories.routing_state_repository import reset_routing_states
+from app.repositories.ticket_repository import reset_simulation_tickets
 from app.services.simulation_scheduler import run_simulation
 from app.services.simulation_service import (
     configure_simulation,
@@ -69,6 +72,27 @@ def stop():
         "interval_seconds": state.interval_seconds,
         "running": state.running,
     }
+
+
+@router.post("/reset")
+def reset():
+    stop_simulation()
+
+    db = SessionLocal()
+
+    try:
+        reset_ticket_count = reset_simulation_tickets(db)
+        reset_routing_state_count = reset_routing_states(db)
+
+        return {
+            "message": "Simulation reset successfully.",
+            "tickets_reset": reset_ticket_count,
+            "routing_states_reset": reset_routing_state_count,
+            "running": False,
+        }
+
+    finally:
+        db.close()
 
 
 @router.get("")

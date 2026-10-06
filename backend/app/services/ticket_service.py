@@ -1,8 +1,11 @@
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
-from app.repositories.ticket_repository import create_tickets, get_all_tickets
-from app.schemas.ticket import TicketUploadResult
+from app.repositories import ticket_repository
+from app.schemas.ticket import (
+    TicketOut,
+    TicketUploadResult,
+)
 from app.utils.excel_parser import parse_ticket_excel
 
 
@@ -12,7 +15,7 @@ def upload_tickets(
 ) -> TicketUploadResult:
     tickets = parse_ticket_excel(file)
 
-    created_tickets = create_tickets(
+    created_tickets = ticket_repository.create_tickets(
         db,
         tickets,
     )
@@ -27,5 +30,26 @@ def upload_tickets(
     )
 
 
-def list_tickets(db: Session):
-    return get_all_tickets(db)
+def list_tickets(
+    db: Session,
+    status: str | None = None,
+) -> list[TicketOut]:
+    tickets = ticket_repository.get_all_tickets(
+        db,
+        status,
+    )
+
+    result = []
+
+    for ticket in tickets:
+        out = TicketOut.model_validate(ticket)
+
+        out.assigned_employee_name = (
+            ticket.assigned_employee.name
+            if ticket.assigned_employee
+            else None
+        )
+
+        result.append(out)
+
+    return result

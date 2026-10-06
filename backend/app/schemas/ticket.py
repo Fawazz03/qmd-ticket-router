@@ -29,6 +29,7 @@ class TicketOut(BaseModel):
     queue: str
     status: str
     assigned_employee_id: Optional[int]
+    assigned_employee_name: Optional[str] = None
     created_at: datetime
     arrived_at: Optional[datetime]
     assigned_at: Optional[datetime]
