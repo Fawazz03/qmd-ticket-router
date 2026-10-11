@@ -1,4 +1,7 @@
-const API_BASE_URL = "http://localhost:8000";
+
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:8000";
 
 export async function uploadRoster(file: File) {
   const formData = new FormData();
@@ -15,9 +18,7 @@ export async function uploadRoster(file: File) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(
-      data.detail || "Roster upload failed."
-    );
+    throw new Error(data.detail || "Roster upload failed.");
   }
 
   return data;
@@ -38,9 +39,7 @@ export async function uploadTickets(file: File) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(
-      data.detail || "Ticket upload failed."
-    );
+    throw new Error(data.detail || "Ticket upload failed.");
   }
 
   return data;
@@ -51,9 +50,7 @@ export async function getTickets(status?: string) {
     ? `${API_BASE_URL}/api/tickets?status=${encodeURIComponent(status)}`
     : `${API_BASE_URL}/api/tickets`;
 
-  const response = await fetch(url, {
-    cache: "no-store",
-  });
+  const response = await fetch(url, { cache: "no-store" });
 
   if (!response.ok) {
     throw new Error("Failed to fetch tickets.");
@@ -63,12 +60,9 @@ export async function getTickets(status?: string) {
 }
 
 export async function getRoster() {
-  const response = await fetch(
-    `${API_BASE_URL}/api/roster`,
-    {
-      cache: "no-store",
-    }
-  );
+  const response = await fetch(`${API_BASE_URL}/api/roster`, {
+    cache: "no-store",
+  });
 
   if (!response.ok) {
     throw new Error("Failed to fetch roster.");
@@ -78,17 +72,12 @@ export async function getRoster() {
 }
 
 export async function getSimulationState() {
-  const response = await fetch(
-    `${API_BASE_URL}/api/simulation`,
-    {
-      cache: "no-store",
-    }
-  );
+  const response = await fetch(`${API_BASE_URL}/api/simulation`, {
+    cache: "no-store",
+  });
 
   if (!response.ok) {
-    throw new Error(
-      "Failed to fetch simulation state."
-    );
+    throw new Error("Failed to fetch simulation state.");
   }
 
   return response.json();
@@ -126,17 +115,13 @@ export async function configureSimulation(
 export async function startSimulation() {
   const response = await fetch(
     `${API_BASE_URL}/api/simulation/start`,
-    {
-      method: "POST",
-    }
+    { method: "POST" }
   );
 
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(
-      data.detail || "Failed to start simulation."
-    );
+    throw new Error(data.detail || "Failed to start simulation.");
   }
 
   return data;
@@ -145,17 +130,13 @@ export async function startSimulation() {
 export async function stopSimulation() {
   const response = await fetch(
     `${API_BASE_URL}/api/simulation/stop`,
-    {
-      method: "POST",
-    }
+    { method: "POST" }
   );
 
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(
-      data.detail || "Failed to stop simulation."
-    );
+    throw new Error(data.detail || "Failed to stop simulation.");
   }
 
   return data;
