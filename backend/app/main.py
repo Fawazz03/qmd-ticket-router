@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -13,9 +14,10 @@ app = FastAPI(title=settings.app_name)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-],
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://qmd-ticket-router.vercel.app",
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -24,6 +26,7 @@ app.add_middleware(
 app.include_router(roster.router)
 app.include_router(tickets.router)
 app.include_router(simulation.router)
+
 
 @app.on_event("startup")
 def on_startup():
